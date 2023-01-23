@@ -2800,6 +2800,17 @@ declare module 'vscode' {
 		baseUri?: Uri;
 
 		/**
+		 * Uri that absolute images paths are resolved from.
+		 *
+		 * ```ts
+		 * const md = new vscode.MarkdownString(`![image](/image.png)`);
+		 * md.imageRoot = vscode.Uri.file('/path/to/dir/');
+		 * // Here 'image' in the rendered markdown resolves to '/path/to/dir/image.png'
+		 * ```
+		 */
+		imageRoot?: Uri;
+
+		/**
 		 * Creates a new markdown string with the given value.
 		 *
 		 * @param value Optional, initial value.

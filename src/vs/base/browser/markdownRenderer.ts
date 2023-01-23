@@ -22,7 +22,7 @@ import { marked } from 'vs/base/common/marked/marked';
 import { parse } from 'vs/base/common/marshalling';
 import { FileAccess, Schemas } from 'vs/base/common/network';
 import { cloneAndChange } from 'vs/base/common/objects';
-import { dirname, resolvePath } from 'vs/base/common/resources';
+import { dirname, isAbsolutePath, joinPath, resolvePath } from 'vs/base/common/resources';
 import { escape } from 'vs/base/common/strings';
 import { URI } from 'vs/base/common/uri';
 
@@ -246,7 +246,11 @@ export function renderMarkdown(markdown: IMarkdownString, options: MarkdownRende
 				let href = src;
 				try {
 					if (markdown.baseUri) { // absolute or relative local path, or file: uri
-						href = resolveWithBaseUri(URI.from(markdown.baseUri), href);
+						if (markdown.imageRoot && !hasScheme(href) && isAbsolutePath(URI.parse(href))) {
+							href = joinPath(URI.from(markdown.imageRoot), href).toString();
+						} else {
+							href = resolveWithBaseUri(URI.from(markdown.baseUri), href);
+						}
 					}
 				} catch (err) { }
 
@@ -325,9 +329,10 @@ function postProcessCodeBlockLanguageId(lang: string | undefined): string {
 	return lang;
 }
 
+const hasScheme = (href: string): boolean => /^\w[\w\d+.-]*:/.test(href);
+
 function resolveWithBaseUri(baseUri: URI, href: string): string {
-	const hasScheme = /^\w[\w\d+.-]*:/.test(href);
-	if (hasScheme) {
+	if (hasScheme(href)) {
 		return href;
 	}
 

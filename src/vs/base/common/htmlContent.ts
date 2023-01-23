@@ -19,6 +19,7 @@ export interface IMarkdownString {
 	readonly supportThemeIcons?: boolean;
 	readonly supportHtml?: boolean;
 	readonly baseUri?: UriComponents;
+	readonly imageRoot?: UriComponents;
 	uris?: { [href: string]: UriComponents };
 }
 
